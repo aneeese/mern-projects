@@ -1,43 +1,54 @@
 import React, { useState } from "react";
+import AddIcon from "@material-ui/icons/Add"
+import Fab from '@material-ui/core/Fab';
+import Zoom from '@material-ui/core/Zoom'
 
 function CreateArea(props) {
 
-  const [note, setNote] = useState({
-    title: "",
-    content: ""
-  })
+  const [note, setNote] = useState({ title: "", content: "" });
+  const [isClicked, setClick] = useState(false);
 
   function handleInput(event) {
     const {name, value} = event.target;
     setNote(prevValue => {
-      if (name === "title") {
-        return {
-          title: value,
-          content: prevValue.content
-        }
-      } else if (name === "content") {
-        return {
-          title: prevValue.title,
-          content: value
-        }
+      return {
+        ...prevValue, [name]: value
       }
     })
+  }
+
+  function handleClick() {
+    setClick(true);
   }
   
   return (
     <div>
-      <form>
-        <input onChange={handleInput} value={note.title} name="title" placeholder="Title" />
-        <textarea onChange={handleInput} value={note.content} name="content" placeholder="Take a note..." rows="3" />
-        <button onClick={(event) => {
-            props.AddNewNote(note);
-            event.preventDefault();
-            setNote({
-              title: "",
-              content: ""
-            })
-          }
-        }>Add</button>
+      <form className="create-note">
+        { 
+        isClicked ? <input 
+          onChange={handleInput} 
+          value={note.title} 
+          name="title" 
+          placeholder="Title" /> : null
+        }
+        <textarea 
+          onChange={handleInput} 
+          value={note.content} 
+          name="content" 
+          placeholder="Take a note..." 
+          rows={isClicked ? "3" : "1"} 
+          onClick={handleClick}/>
+        <Zoom in={isClicked}>
+          <Fab 
+            onClick={(event) => {
+              props.AddNewNote(note);
+              event.preventDefault();
+              setNote({ title: "", content: "" })
+            }}>
+              <AddIcon />
+          </Fab>
+        </Zoom>
+        
       </form>
     </div>
   );
