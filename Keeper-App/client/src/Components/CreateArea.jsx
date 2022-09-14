@@ -14,7 +14,7 @@ function CreateArea(props) {
       return {
         ...prevValue, [name]: value
       }
-    })
+    })  
   }
 
   function handleClick() {
