@@ -17,8 +17,7 @@ mongoose.connect("mongodb://localhost:27017/book-app");
 const Storage = multer.diskStorage({
     // destination for files
     destination: (req, file, callback) => {
-        callback(null, path.join(__dirname + "/uploads/"))
-        //callback(null, "./uploads")
+        callback(null, path.join(__dirname, "/uploads/"))
     },
     // add back the extension
     filename: (req, file, callback) => {
@@ -26,14 +25,27 @@ const Storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage: Storage })
+// Multer Filter
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.split("/")[1] === "pdf" ||
+        file.mimetype.split("/")[1] === "png" ||
+        file.mimetype.split("/")[1] === "jpg" ||
+        file.mimetype.split("/")[1] === "jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid File type!!"), false);
+    }
+};
+
+const upload = multer({ storage: Storage, fileFilter: multerFilter })
 
 const booksSchema = mongoose.Schema({
     title: String,
     type: String,
     description: String,
-    coverPic: Buffer,
-    file: Buffer
+    coverPic: {data: String, contentType: String},
+    file: {data: String, contentType: String}
 })
 
 const Book = mongoose.model("Book", booksSchema);
@@ -45,7 +57,7 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
     Book.find({}, (error, result) => {
         if (!error) {
-            res.render("Home", {book: result[0]})
+            res.render("Home", {book: result})
         } else console.log(error);
     })
 })
@@ -67,14 +79,14 @@ app.post("/upload", upload.fields([{name: "coverPic"}, {name: "bookFile"}]) ,(re
         title: req.body.title,
         type: req.body.category,
         description: req.body.description,
-        coverPic: fs.readFileSync(path.join(__dirname + "/uploads/") + req.body.coverPic),
-        file: fs.readFileSync(path.join(__dirname + "/uploads/") + req.body.bookFile)
+        coverPic: { data: req.files.coverPic[0].originalname, contentType: req.files.coverPic[0].mimetype },
+        file: { data: req.files.bookFile[0].originalname, contentType: req.files.bookFile[0].mimetype }
     })
     book.save(() => { res.redirect("/home") });
 })
 
-app.get("/download", (req, res) => {
-    const file = "D:/Visual Studio/Reactjs/E-Learning/views/Fundamentals_of_Computer_Programming_wit.pdf";
+app.get("/download/:fileName", (req, res) => {
+    const file = path.join(__dirname, `/uploads/${req.params.fileName}`)
     res.download(file);
 })
 app.listen(3000, () => {

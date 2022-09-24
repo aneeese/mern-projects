@@ -1,15 +1,17 @@
 <%- include("header") %>
     <div class="row row-cols-1 row-cols-md-4 g-4 cardGrid">
-      <div class="col">
-        <div class="card">
-          <img src="<%=book.coverPic%>" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title"><%=book.title%></h5>
-            <p class="card-text"><%=book.description%></p>
-            <a href="/download"><button class="btn btn-success">Download</button></a>
+      <% book.forEach((book) => { %>
+        <div class="col">
+          <div class="card">
+            <img src="/uploads/<%=book.coverPic.data%>" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title"><%=book.title%></h5>
+              <p class="card-text"><%=book.description%></p>
+              <a href="/download/<%=book.file.data%>"><button class="btn btn-success">Download</button></a>
+            </div>
           </div>
         </div>
-      </div>
+      <% }) %>
     </div>
     <%- include("footer") %>
 </body>
