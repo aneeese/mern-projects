@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
 
@@ -48,16 +47,28 @@ const booksSchema = mongoose.Schema({
     file: {data: String, contentType: String}
 })
 
+const personSchema = mongoose.Schema({
+    email: String,
+    password: String,
+    likedBooks: [String],
+    bookmarks: [String]
+})
+
 const Book = mongoose.model("Book", booksSchema);
+const Person = mongoose.model("Person", personSchema)
 
 app.get("/", (req, res) => {
     res.render("Landing-pg");
 })
 
+app.get("/user/login", (req, res) => {
+    res.render("login");
+})
+
 app.get("/home", (req, res) => {
     Book.find({}, (error, result) => {
         if (!error) {
-            res.render("Home", {book: result})
+            res.render("home", {book: result})
         } else console.log(error);
     })
 })
@@ -74,7 +85,7 @@ app.get("/upload", (req, res) => {
     res.render("upload")
 })
 
-app.post("/upload", upload.fields([{name: "coverPic"}, {name: "bookFile"}]) ,(req, res) => {
+app.post("/upload", upload.fields([{ name: "coverPic" }, { name: "bookFile" }]) ,(req, res) => {
     const book = new Book({
         title: req.body.title,
         type: req.body.category,
@@ -86,9 +97,18 @@ app.post("/upload", upload.fields([{name: "coverPic"}, {name: "bookFile"}]) ,(re
 })
 
 app.get("/download/:fileName", (req, res) => {
-    const file = path.join(__dirname, `/uploads/${req.params.fileName}`)
+    const file = path.join(__dirname, `/uploads/${ req.params.fileName }`)
     res.download(file);
 })
+
+app.get("/:categoryName", (req, res) => {
+    Book.find({ type: req.params.categoryName }, (error, result) => {
+        if (!error) {
+            res.render("home", { book: result })
+        } else console.log(error);
+    })
+})
+
 app.listen(3000, () => {
     console.log("Server is runing");
 })
