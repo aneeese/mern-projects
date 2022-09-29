@@ -1,0 +1,92 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.logo-pic {
+    display: inline-block;
+    height: 9rem;
+    padding-left: 6.7rem;
+    padding-top: 2.5rem;
+}
+
+.sign-in {
+    position: relative;
+    display: inline-block;
+}
+
+.sign-in-img {
+    margin-top: 1rem;
+    height: 24rem;
+    object-fit: contain;
+}
+
+.form {
+    width: 36%;
+    position: absolute;
+    padding-top: 0.3rem;
+    padding-left: 0.5rem;
+    display: inline-block;
+}
+
+.login-text {
+    padding-bottom: 0.5rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.btn-primary {
+    width: 100% !important;
+    font-weight: 500 !important;
+    margin-top: 1rem;
+    background-color: #27489B !important;
+}
+
+.btn-primary:hover {
+    background-color: #269AD6 !important;
+    font-weight: bold !important;
+}
+
+.form-label {
+    font-weight: 500 !important;
+}
+
+.form-control {
+    margin-bottom: 0.6rem;
+}
+
+.no-account-text {
+    font-size: 0.9rem;
+    color: #8D8D8D;
+}
+
+.sign-up-link {
+    color: #27489B;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sign-up-link:hover {
+    color: #269AD6 !important;
+}
+
+.fg-pass {
+    font-size: 0.9rem;
+    margin-left: 19.4rem;
+    color: #7d7b7b;
+    font-weight: 500;
+}
+
+.fg-pass:hover {
+    color: #269AD6;
+    font-weight: bold;
+}
+
+::-webkit-input-placeholder {
+    font-size: 0.9rem !important;
+}

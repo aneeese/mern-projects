@@ -43,8 +43,8 @@ const booksSchema = mongoose.Schema({
     title: String,
     type: String,
     description: String,
-    coverPic: {data: String, contentType: String},
-    file: {data: String, contentType: String}
+    coverPic: { data: String, contentType: String },
+    file: { data: String, contentType: String }
 })
 
 const personSchema = mongoose.Schema({
@@ -61,8 +61,12 @@ app.get("/", (req, res) => {
     res.render("Landing-pg");
 })
 
-app.get("/user/login", (req, res) => {
+app.get("/login", (req, res) => {
     res.render("login");
+})
+
+app.get("/sign-up", (req, res) => {
+    res.render("sign-up")
 })
 
 app.get("/home", (req, res) => {
