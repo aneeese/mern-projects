@@ -25,17 +25,17 @@
     <div class="form">
       <h1 class="login-text">Sign in to E-Learning</h1>
       <p class="no-account-text">No Account? &nbsp <a class="sign-up-link" href="./sign-up">Register here!</a><p>
-      <form>
+      <form action="/login" method="post">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter your email address" aria-describedby="emailHelp">
+          <input type="email" name="username" class="form-control" id="exampleInputEmail1" placeholder="email12@gmail.com" aria-describedby="emailHelp">
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Password</label>
-          <input type="password" class="form-control" placeholder="Enter your password" id="exampleInputPassword1">
+          <input type="password" name="password" class="form-control" placeholder="password" id="exampleInputPassword1">
           <a class="fg-pass" href="">Forget Password?</a>
         </div>
-        <button class="btn btn-lg btn-primary" type="submit"><a href="./home">.</a>Login</button>
+        <button class="btn btn-lg btn-primary" type="submit">Login</button>
       </form>
     </div>
     <%- include("./partials/footer") %>

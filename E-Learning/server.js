@@ -3,12 +3,26 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const path = require("path");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+const findOrCreate = require('mongoose-findorcreate');
 
 const app = express();
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(express.static(__dirname));
+
+app.use(session({
+    secret: "1@34#fgd",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect("mongodb://localhost:27017/book-app");
 
@@ -47,27 +61,42 @@ const booksSchema = mongoose.Schema({
     file: { data: String, contentType: String }
 })
 
-const personSchema = mongoose.Schema({
+const personSchema = new mongoose.Schema({
     email: String,
     password: String,
     likedBooks: [String],
     bookmarks: [String]
 })
 
+personSchema.plugin(passportLocalMongoose);
+personSchema.plugin(findOrCreate);
+
 const Book = mongoose.model("Book", booksSchema);
-const Person = mongoose.model("Person", personSchema)
+const Person = mongoose.model("Person", personSchema);
 
-app.get("/", (req, res) => {
-    res.render("Landing-pg");
-})
+passport.use(Person.createStrategy());
 
-app.get("/login", (req, res) => {
-    res.render("login");
-})
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
 
-app.get("/sign-up", (req, res) => {
-    res.render("sign-up")
-})
+passport.deserializeUser((id, done) => {
+    Person.findById(id, (error, user) => {
+        done(error, user);
+    });
+});
+
+app.get("/", (req, res) => { res.render("Landing-pg") })
+
+app.get("/login", (req, res) => { res.render("login") })
+
+app.get("/sign-up", (req, res) => { res.render("sign-up") })
+
+app.get("/about", (req, res) => { res.render("about") })
+
+app.get("/contact", (req, res) => { res.render("contact") })
+
+app.get("/upload", (req, res) => { res.render("upload") })
 
 app.get("/home", (req, res) => {
     Book.find({}, (error, result) => {
@@ -75,18 +104,6 @@ app.get("/home", (req, res) => {
             res.render("home", {book: result})
         } else console.log(error);
     })
-})
-
-app.get("/about", (req, res) => {
-    res.render("about")
-})
-
-app.get("/contact", (req, res) => {
-    res.render("contact")
-})
-
-app.get("/upload", (req, res) => {
-    res.render("upload")
 })
 
 app.post("/upload", upload.fields([{ name: "coverPic" }, { name: "bookFile" }]) ,(req, res) => {
@@ -112,6 +129,26 @@ app.get("/:categoryName", (req, res) => {
         } else console.log(error);
     })
 })
+
+app.post("/register", (req, res) => {
+    Person.register({username: req.body.username}, req.body.password, (error, person) => {
+        if (error) {
+            console.log(error);
+            res.redirect('/sign-up')
+        } else passport.authenticate('local')(req, res, () => { res.redirect('/home') });
+    })
+});
+
+app.post('/login', (req, res) => {
+    const user = new Person({ username: req.body.username, password: req.body.password });
+    req.logIn(user, (error) => {
+        if (error) {
+            console.log(error);
+            res.redirect('/login');
+        }
+        else passport.authenticate('local')(req, res, () => { res.redirect('/home') });
+    })
+});
 
 app.listen(3000, () => {
     console.log("Server is runing");
