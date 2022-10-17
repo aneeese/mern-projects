@@ -122,6 +122,20 @@ app.get("/download/:fileName", (req, res) => {
     res.download(file);
 })
 
+app.get("/likebook/:bookID", (req, res) => {
+    Person.findById(req.user.id, (error, foundUser) => {
+        if (error) console.log(error);
+        else {
+            if (!foundUser.likedBooks.includes(req.params.bookID)) {
+                foundUser.likedBooks.push(req.params.bookID);
+            } else foundUser.likedBooks.remove(req.params.bookID);
+            foundUser.save(() => {
+                res.redirect("/home")
+            });
+        }
+    })
+})
+
 app.get("/:categoryName", (req, res) => {
     Book.find({ type: req.params.categoryName }, (error, result) => {
         if (!error) {

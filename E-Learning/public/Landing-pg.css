@@ -46,3 +46,7 @@
 .cust-btn {
     background-color: #27489B;
 }
+
+.cust-btn:hover {
+    background-color: #269AD6;
+}

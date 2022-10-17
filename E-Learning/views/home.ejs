@@ -7,7 +7,8 @@
             <div class="card-body">
               <h5 class="card-title"><%=book.title%></h5>
               <p class="card-text"><%=book.description%></p>
-              <a href="/download/<%=book.file.data%>"><button class="btn btn-success">Download</button></a>
+              <a href="/likebook/<%=book._id.toString()%>"><button class="btn btn-outline-primary" id="like-btn">Like</button></a>
+              <a href="/download/<%=book.file.data%>"><button class="btn btn-success download-btn">Download</button></a>
             </div>
           </div>
         </div>
