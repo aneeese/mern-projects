@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" onclick="hideMenu()">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -44,24 +44,24 @@
             <img class="profile-pic" src="../public/images/main-pic.png" alt="unplash" onclick="toggleMenu()">
             <div class="sub-menu-wrap" id="subMenu">
               <div class="sub-menu">
-                <a href="" class="sub-menu-link">
-                  <img src="../public/images/profile.png">
+                <a href="/user/editProfile" class="sub-menu-link" role="button">
+                  <img src="../public/images/profile.png" role="button">
                   <p>Edit Profile</p>
                 </a>
-                <a href="" class="sub-menu-link">
-                  <img src="../public/images/like.png">
+                <a href="/user/likedBooks" class="sub-menu-link" role="button">
+                  <img src="../public/images/like.png" role="button">
                   <p>Liked Books</p>
                 </a>
-                <a href="" class="sub-menu-link">
-                  <img src="../public/images/star.png">
+                <a href="/user/bookmarks" class="sub-menu-link" role="button">
+                  <img src="../public/images/star.png" role="button">
                   <p>Bookmarks</p>
                 </a>
-                <a href="" class="sub-menu-link">
-                  <img src="../public/images/upload.png">
+                <a href="/user/upload" class="sub-menu-link" role="button">
+                  <img src="../public/images/upload.png" role="button">
                   <p>Uploads</p>
                 </a>
-                <a href="" class="sub-menu-link">
-                  <img src="../public/images/logout.png">
+                <a href="/user/logout" class="sub-menu-link" role="button">
+                  <img src="../public/images/logout.png" role="button">
                   <p>Logout</p>
                 </a>
               </div>
@@ -70,10 +70,21 @@
         </div>
     </nav>
     <script>
-      let subMenu = document.getElementById("subMenu");
       function toggleMenu() {
+        let subMenu = document.getElementById("subMenu");
         subMenu.classList.toggle("open-menu");
       }
+
+      let menu = document.getElementById("subMenu");
+      function hideMenu() {
+        // Select the entire HTML document
+        const html = document.querySelector("html");
+        html.addEventListener("click", function (e) {
+            if (e.target !== menu)
+              menu.classList.remove("open-menu");
+        });
+      }
+
     </script>
     <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
         <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>

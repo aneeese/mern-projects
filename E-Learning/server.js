@@ -16,7 +16,7 @@ app.use(express.static("public"));
 app.use(express.static(__dirname));
 
 app.use(session({
-    secret: "1@34#fgd",
+    secret: "",
     resave: false,
     saveUninitialized: false
 }));
@@ -39,15 +39,15 @@ const Storage = multer.diskStorage({
 })
 
 // Multer Filter
-const multerFilter = (req, file, cb) => {
+const multerFilter = (req, file, callback) => {
     if (file.mimetype.split("/")[1] === "pdf" ||
         file.mimetype.split("/")[1] === "png" ||
         file.mimetype.split("/")[1] === "jpg" ||
         file.mimetype.split("/")[1] === "jpeg"
     ) {
-      cb(null, true);
+      callback(null, true);
     } else {
-      cb(new Error("Invalid File type!!"), false);
+      callback(new Error("Invalid File type!!"), false);
     }
 };
 
@@ -76,14 +76,10 @@ const Person = mongoose.model("Person", personSchema);
 
 passport.use(Person.createStrategy());
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
+passport.serializeUser((user, done) => { done(null, user.id) });
 
 passport.deserializeUser((id, done) => {
-    Person.findById(id, (error, user) => {
-        done(error, user);
-    });
+    Person.findById(id, (error, user) => { done(error, user) });
 });
 
 app.get("/", (req, res) => { res.render("Landing-pg") })
@@ -99,11 +95,13 @@ app.get("/contact", (req, res) => { res.render("contact") })
 app.get("/upload", (req, res) => { res.render("upload") })
 
 app.get("/home", (req, res) => {
-    Book.find({}, (error, result) => {
-        if (!error) {
-            res.render("home", {book: result})
-        } else console.log(error);
-    })
+    if (req.isAuthenticated()) {
+        Book.find({}, (error, result) => {
+            if (!error) {
+                res.render("home", {book: result})
+            } else console.log(error);
+        })
+    } else res.redirect('/login')
 })
 
 app.post("/upload", upload.fields([{ name: "coverPic" }, { name: "bookFile" }]) ,(req, res) => {
@@ -129,9 +127,7 @@ app.get("/likebook/:bookID", (req, res) => {
             if (!foundUser.likedBooks.includes(req.params.bookID)) {
                 foundUser.likedBooks.push(req.params.bookID);
             } else foundUser.likedBooks.remove(req.params.bookID);
-            foundUser.save(() => {
-                res.redirect("/home")
-            });
+            foundUser.save(() => { res.redirect("/home") });
         }
     })
 })
@@ -163,6 +159,13 @@ app.post('/login', (req, res) => {
         else passport.authenticate('local')(req, res, () => { res.redirect('/home') });
     })
 });
+
+app.get('/user/logout', (req, res) => {
+    req.logOut((error) => {
+        if (error) console.log(error);
+        res.redirect("/");
+    });
+})
 
 app.listen(3000, () => {
     console.log("Server is runing");
